@@ -6,7 +6,7 @@ function ColorSchemesExample() {
     return (
         <Navbar bg="light" data-bs-theme="light" className="shadow-lg">
             <Container>
-                <Navbar.Brand href="/">Navbar</Navbar.Brand>
+                <Navbar.Brand href="/">Food ResQ</Navbar.Brand>
                 <Nav className="ml-auto">
                     <Nav.Link href="/">My Fridge</Nav.Link>
                     <Nav.Link href="/recipes">Recipes</Nav.Link>

@@ -2,11 +2,14 @@
 
 .App {
   text-align: center;
-  background-color: #75b798;
 }
 
 .vh-calc {
   height: calc(100vh - 56px);
+}
+
+.home {
+  background-color: #E3FFDF;
 }
 
 @import "bootstrap/scss/functions";

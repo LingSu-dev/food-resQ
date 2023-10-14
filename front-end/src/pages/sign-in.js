@@ -18,7 +18,7 @@ function Signin() {
                     <Row className="h-100 w-100 align-items-center">
                         <Col className="h-100 d-flex align-items-center foodbg">
                             <Form className="w-75">
-                                <h1 className="text-black text-center">Food ResQ</h1>
+                                <h1 className="text-black text-center mb-4">Food ResQ</h1>
                                 <Form.Group>
                                     <Form.Control size="md" placeholder="Username" className="position-relative mb-3" />
                                 </Form.Group>
