@@ -1,0 +1,15 @@
+.ingredients-header {
+        background-color: #01987a;
+}
+
+.ingredients-item {
+        background-color: white;
+}
+
+/*.ingredients-item:nth-child(even) {*/
+/*        background-color: #f3f3f3;*/
+/*}*/
+
+.ingredients-view {
+        max-height: 72vh;
+}
