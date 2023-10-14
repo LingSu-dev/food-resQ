@@ -5,6 +5,10 @@
   background-color: #75b798;
 }
 
+.vh-calc {
+  height: calc(100vh - 56px);
+}
+
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/mixins";

@@ -6,11 +6,11 @@ function ColorSchemesExample() {
     return (
         <Navbar bg="light" data-bs-theme="light" className="shadow-lg">
             <Container>
-                <Navbar.Brand href="#home">Navbar</Navbar.Brand>
-                <Nav className="me-auto">
-                    <Nav.Link href="#home">Home</Nav.Link>
-                    <Nav.Link href="#features">Features</Nav.Link>
-                    <Nav.Link href="#pricing">Pricing</Nav.Link>
+                <Navbar.Brand href="/">Navbar</Navbar.Brand>
+                <Nav className="ml-auto">
+                    <Nav.Link href="/">My Fridge</Nav.Link>
+                    <Nav.Link href="/recipes">Recipes</Nav.Link>
+                    <Nav.Link href="/account">Account</Nav.Link>
                 </Nav>
             </Container>
         </Navbar>

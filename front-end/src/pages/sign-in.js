@@ -7,13 +7,14 @@ import Col from "react-bootstrap/Col";
 
 import './sign-in.css';
 import Navbar from "../components/nav";
+import {Link} from "react-router-dom";
 
 function Signin() {
     return (
         <>
             <Navbar />
             <div className="signin">
-                <Container className="vh-100">
+                <Container className="vh-calc">
                     <Row className="h-100 w-100 align-items-center">
                         <Col className="h-100 d-flex align-items-center foodbg">
                             <Form className="w-75">
@@ -27,10 +28,16 @@ function Signin() {
                                 <div className="d-grid">
                                     <Button variant="dark" size="md">Sign in</Button>
                                 </div>
+                                <div className="text-center fs-5 mt-3">
+                                    <Form.Text className="text-black">
+                                        Don't have an account? &nbsp;
+                                        <Link to={"/signup"} className="text-black">Sign up</Link>
+                                    </Form.Text>
+                                </div>
                             </Form>
                         </Col>
                         <Col>
-                            <div className="flex-column justify-content-center">
+                            <div className="flex-column justify-content-center text-black">
                                 <h4>Worried about your ingredients going bad?</h4>
                                 <h5 className="mt-3">Try our recipes catered towards what ingredients you have right now.</h5>
                             </div>
