@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import Signin from "./pages/sign-in";
 import SignUp from "./pages/sign-up";
 import Container from "react-bootstrap/Container";
