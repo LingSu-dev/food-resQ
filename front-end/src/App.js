@@ -1,27 +1,19 @@
 import './App.scss';
+import {BrowserRouter, Routes, Route } from "react-router-dom";
 import Signin from "./pages/sign-in";
 import SignUp from "./pages/sign-up";
-import Container from "react-bootstrap/Container";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
+
 
 function App() {
   return (
-    <div className="App">
-        <Container>
-            <Row>
-                <Col>
-                    <Signin/>
-                </Col>
-                <Col>
-                    Placeholder
-                    {/*  <SignUp/>*/}
-                </Col>
-            </Row>
-
-
-        </Container>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" >
+            <Route path="signin" element={<Signin />}/>
+            <Route path="signup" element={<SignUp />}/>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
