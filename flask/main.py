@@ -4,22 +4,23 @@ from flask import Flask, request, redirect, url_for, session, jsonify
 from decouple import config
 from bson import ObjectId
 import bcrypt
-# import openai
+import openai
 import langchain
-# from langchain.chat_models import ChatOpenAI as OpenAI
+from langchain.chat_models import ChatOpenAI as OpenAI
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
     AIMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
-from langchain.llms import OpenAI
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 import os
 import logging
-import requests
+from flask_cors import CORS 
 
 app = Flask(__name__)
+CORS(app)
+
 app.secret_key = config('SECRET_KEY')
 client = MongoClient(config('MONGO_URI'), server_api=ServerApi('1'))
 db = client[config('MONGO_DB')]
@@ -27,16 +28,17 @@ users_collection = db['users']
 ingredients_collection = db['ingredients']
 
 os.environ["OPENAI_API_KEY"] = config('OPENAPIKEY')
-# openai.api_key = os.environ["OPENAI_API_KEY"]
-llm = OpenAI(temperature=0, model_name="gpt-3.5-turbo")
+llm=OpenAI(temperature=0, model_name="gpt-3.5-turbo-16k-0613")
 
 def is_authenticated():
     return 'username' in session
 
 @app.before_request
 def authentication_middleware():
+    print(request.endpoint)
     if not is_authenticated() and request.endpoint not in ['login', 'signup']:
         # Redirect to the login page if not authenticated
+        print("reached middleware")
         return 'You are not logged in'
 
 @app.route('/')
@@ -53,7 +55,7 @@ def login():
 
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
         session['username'] = username
-        return redirect(url_for('profile'))
+        return username
     else:
         return jsonify({'error': 'Incorrect Credentials'}), 401
 
@@ -63,14 +65,14 @@ def signup():
     body = request.get_json()
     username = body.get("username")
     password = body.get("password")
-
+    
     existing_user = users_collection.find_one({'username': username})
 
     if not existing_user:
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         users_collection.insert_one({'username': username, 'password': hashed_password})
         session['username'] = username
-        return redirect(url_for('profile'))
+        return username
     else:
         return jsonify({'error': 'User already exists'}), 400
 
@@ -78,10 +80,6 @@ def signup():
 def logout():
     session.pop('username', None)
     return redirect(url_for('home'))
-
-@app.route('/profile')
-def profile():
-    return f'Welcome, {session["username"]}'
 
 @app.route('/ingredients', methods=['POST'])
 def create_ingredient():
@@ -170,8 +168,8 @@ def get_LLM_recipes():
     body = request.get_json()
     custom = str(body.get("customization"))
     preference = str(body.get("preference"))
-    recipes_numbers = str(3)
-    servings = str(body.get("servings"))
+    recipes_numbers = str(body.get("recipe_numbers"))
+    servings = str(3)
     username = session['username']
     
     ingredients = list(ingredients_collection.find({'username': username}))
@@ -189,7 +187,7 @@ def get_LLM_recipes():
     Make sure you are not using ingredients just to use them, make extra sure that you are trying your best to not use ingredients that you do not have, and make sure to use ingredients that makes sense together. 
     In your fridge you have """+user_ingredients+""", You are planning to cook for """+servings+""" serving(s) and you are to provide """+recipes_numbers+""" recipe(s) complete with cooking time. As a request from your family, they wanted you to {customization: """+custom+""", preference: """+preference+"""}.
     Please return the ingredients used as a json object with key as ingredient name and value as the amount used. Please then return the recipe steps as a list of strings (steps 1 by 1). 
-    Finally Package the result as aother new json object with form {ingredients: { dish1: [ingredient1:[amount, unit], ingredient2: [amount, unit] ...], dish2:[ingredient1:[amount, unit], ingredient2: [amount, unit] ...], dish3: .... }, instruction: [dish1: ["step 1", "step 2", .... , "step n",  "Preparation and cooking time"], dish2: [ ... ], ....]
+    Finally Package the result as aother new json object with form {ingredients: { dish1: [amount, unit], name2: [amount, unit] ...], dish2:[ ... ], .... }, instruction: [dish1: ["step 1", "step 2", .... , "step n",  "Preparation and cooking time"], dish2: [ ... ], ....]
     """
     
     logging.basicConfig(filename="std.log", 
@@ -205,34 +203,20 @@ def get_LLM_recipes():
     #some messages to test
     logger.debug(prompt)
     logger.debug("\n")
-    # messages = [
-    #     HumanMessage(
-    #         content="prompt"
-    #     ),
-    # ]
-    recipe=llm(prompt)
+    messages = [
+        HumanMessage(
+            content="prompt"
+        ),
+    ]
+    recipe=llm(messages)
     # recipe = prompt
-    # recipe = messages
-    # recipe = openai.ChatCompletion.create(engine="gpt-3.5-turbo", temperature=0,
-    #                                       messages=[{
-    #                                           "role": "user",
-    #                                           "content": prompt
-    #                                       }])
-    # auth = "Bearer " + os.environ["OPENAI_API_KEY"]
-    # response = requests.post("https://api.openai.com/v1/chat/completions",
-    #                          headers={"Content-Type": "application/json",
-    #                                   "Authorization": auth},
-    #                          data={"model": "gpt-3.5-turbo",
-    #                                "messages": [{"role": "user", "content": "Say this is a test!"}],
-    #                                "temperature": 0.7})
-    # response = requests.get("https://www.google.com/")
-    # print(response.text)
-    # recipe = response.choices[0].message.content
-    # logger.debug(recipe)
-    # print(recipe)
-    #
-    # return recipe
+    logger.debug(recipe) 
     print(recipe)
+
     return recipe
+
+
+
+
 
 app.run(host='0.0.0.0', port=5000)

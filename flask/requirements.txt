@@ -3,3 +3,5 @@ pymongo
 flask
 bcrypt
 python-decouple
+langchain
+flask_cors
