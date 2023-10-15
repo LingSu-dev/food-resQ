@@ -69,16 +69,15 @@ function Signup() {
             <Col className="h-100 d-flex align-items-center foodbg">
               <Form className="w-75" onSubmit={submitRegisterForm}>
                 <h1 className="text-black text-center">Food ResQ</h1>
-                <Form.Group className="mb-3">
+                <Form.Group>
                   <Form.Label className={errors && "text-danger"}>
                     {errors || ""}
                   </Form.Label>
                   <Form.Control
                     size="md"
                     placeholder="Username"
-                    // className="position-relative mb-3"
+                    className="position-relative mb-3"
                     value={variables.username}
-                    className={errors.username && "is-invalid"}
                     onChange={(e) =>
                       setVariables({
                         ...variables,
@@ -92,9 +91,8 @@ function Signup() {
                     type="password"
                     size="md"
                     placeholder="Password"
-                    // className="position-relative"
+                    className="position-relative"
                     value={variables.password}
-                    className={errors.password && "is-invalid"}
                     onChange={(e) =>
                       setVariables({
                         ...variables,
@@ -111,9 +109,8 @@ function Signup() {
                     type="password"
                     size="md"
                     placeholder="Confirm password"
-                    // className="position-relative"
+                    className="position-relative"
                     value={variables.confirmPassword}
-                    className={errors.confirmPassword && "is-invalid"}
                     onChange={(e) =>
                       setVariables({
                         ...variables,

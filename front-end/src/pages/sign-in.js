@@ -8,8 +8,57 @@ import Col from "react-bootstrap/Col";
 import './auth.css';
 import Navbar from "../components/nav";
 import {Link} from "react-router-dom";
+import {useState} from "react";
+import axios from "axios";
 
 function Signin() {
+    const [variables, setVariables] = useState({
+        username: "",
+        password: ""
+    });
+
+    const [errors, setErrors] = useState("");
+
+    function submitSigninForm(e) {
+        e.preventDefault();
+
+        const api_domain = process.env.BACKEND_API_DOMAIN
+            ? process.env.BACKEND_API_DOMAIN
+            : "localhost";
+        const api_url = "http://" + api_domain + ":5000";
+        console.log(api_url);
+        const axiosWithCookies = axios.create({
+            withCredentials: true,
+        });
+
+        axiosWithCookies
+            .post(api_url + "/login", {
+                username: variables.username,
+                password: variables.password,
+            })
+            .then(function (response) {
+                // handle success
+                console.log(response);
+                console.log(response.headers);
+                localStorage.setItem("user", variables.username);
+                window.location.href = "/";
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+                if (error.response) {
+                    if (error.response.status === 401) {
+                        setErrors(error.response.data.error);
+                    } else {
+                        setErrors("Error from backend: " + error.response.status);
+                    }
+                } else if (error.request) {
+                    setErrors("No response");
+                } else {
+                    setErrors("Error when setting up the request");
+                }
+            });
+    }
     return (
         <>
             <Navbar />
@@ -17,16 +66,39 @@ function Signin() {
                 <Container className="vh-calc">
                     <Row className="h-100 w-100 align-items-center">
                         <Col className="h-100 d-flex align-items-center foodbg">
-                            <Form className="w-75">
+                            <Form className="w-75" onSubmit={submitSigninForm}>
                                 <h1 className="text-black text-center mb-4">Food ResQ</h1>
                                 <Form.Group>
-                                    <Form.Control size="md" placeholder="Username" className="position-relative mb-3" />
+                                    <Form.Label className={errors && "text-danger"}>
+                                        {errors || ""}
+                                    </Form.Label>
+                                    <Form.Control size="md"
+                                                  placeholder="Username"
+                                                  className="position-relative mb-3"
+                                                  value={variables.username}
+                                                  onChange={(e) =>
+                                                      setVariables({
+                                                          ...variables,
+                                                          username: e.target.value,
+                                                      })
+                                                  }
+                                    />
                                 </Form.Group>
                                 <Form.Group className="mb-3" controlId="sign-in-password">
-                                    <Form.Control type="password" size="md" placeholder="Password" className="position-relative" />
+                                    <Form.Control type="password"
+                                                  size="md"
+                                                  placeholder="Password"
+                                                  className="position-relative"
+                                                  value={variables.password}
+                                                  onChange={(e) =>
+                                                      setVariables({
+                                                          ...variables,
+                                                          password: e.target.value,
+                                                      })
+                                                  }/>
                                 </Form.Group>
                                 <div className="d-grid">
-                                    <Button variant="dark" size="md">Sign in</Button>
+                                    <Button variant="dark" size="md" type="submit">Sign in</Button>
                                 </div>
                                 <div className="text-center fs-5 mt-3">
                                     <Form.Text className="text-black">

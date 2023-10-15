@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useState } from 'react';
 import Navbar from "../components/nav";
 import Container from "react-bootstrap/Container";
@@ -11,72 +11,15 @@ import IngredientFormItem from "../components/ingredient-form-item";
 import Button from "react-bootstrap/Button";
 import {Accordion} from "react-bootstrap";
 import RecipeItem from "../components/recipe-item";
+import axios from "axios";
 
 function Recipes() {
     const [preference, setPreference] = useState([]);
     const [recipes, setRecipes] = useState([]);
+    const [customization, setCustomization] = useState("");
 
-    const returnJSONObject = {
-        "ingredients": {
-            "Asian Dish": {
-                "Pork Ribs": [200, "g"],
-                "Onion": [1, "large"],
-                "Carrot": [1, "medium"],
-                "Potato": [2, "medium"],
-                "Spring Onion": [2, "pieces"],
-                "Rice": [1, "cup (uncooked)"]
-            },
-            "European Dish": {
-                "Pork Ribs": [400, "g"],
-                "Potato": [4, "medium"],
-                "Onion": [1, "large"],
-                "Celery": [1, "whole"],
-                "Heavy Cream": [1, "cup"]
-            },
-            "Rice Dish": {
-                "Hot Dog": [4, "pieces"],
-                "Onion": [1, "large"],
-                "Carrot": [1, "medium"],
-                "Spring Onion": [2, "pieces"],
-                "Rice": [1, "cup (cooked)"]
-            }
-        },
-        "instructions": {
-            "Asian Dish": [
-                "Start by cooking the rice according to the package instructions.",
-                "Cut the pork ribs into small pieces and marinate them with soy sauce, salt, and pepper for 15 minutes.",
-                "Heat a pan with cooking oil and stir-fry the marinated pork ribs until they're cooked through. Set aside.",
-                "In the same pan, add more oil if needed and sauté the sliced onion, carrot, and potato until they start to soften.",
-                "Add sliced spring onions and stir-fry for a few more minutes.",
-                "Return the cooked pork ribs to the pan and mix everything together.",
-                "Adjust the seasoning with soy sauce, salt, and pepper to taste.",
-                "Serve the stir-fry over the cooked rice.",
-                "Preparation and cooking time: Approximately 40 minutes."
-            ],
-            "European Dish": [
-                "Preheat your oven to 350°F (175°C).",
-                "Cut the pork ribs into smaller pieces and season with salt and pepper.",
-                "In a large ovenproof dish, add a drizzle of olive oil and sear the pork ribs until browned. Remove and set aside.",
-                "In the same dish, add more olive oil if needed and sauté the sliced onion, celery, and potato until they start to soften.",
-                "Return the cooked pork ribs to the pan.",
-                "Pour heavy cream over the ingredients until they are partially covered.",
-                "Cover the dish with aluminum foil and bake in the preheated oven for 1 hour.",
-                "Remove the foil and bake for an additional 30 minutes or until the potatoes are tender and the top is golden.",
-                "Serve the creamy potato and pork casserole hot.",
-                "Preparation and cooking time: Approximately 1 hour 30 minutes."
-            ],
-            "Rice Dish": [
-                "Heat a pan with cooking oil and sauté the sliced hot dogs until they start to brown.",
-                "Add sliced onion and carrot to the pan and sauté until they start to soften.",
-                "Add the cooked rice and stir-fry until well combined.",
-                "Add sliced spring onions and stir-fry for a few more minutes.",
-                "Season with soy sauce, salt, and pepper to taste.",
-                "Serve the hot dog and vegetable fried rice hot.",
-                "Preparation and cooking time: Approximately 25 minutes."
-            ]
-        }
-    };
-
+    const [ingredients, setIngredients] = useState([]);
+    console.log(preference.toString());
     const parseRecipes = (recipes) => {
         let recipesArr = [];
 
@@ -93,9 +36,55 @@ function Recipes() {
             recipesArr.push(dishObject);
         }
 
-
         setRecipes(recipesArr);
     }
+
+    const getRecipes = () => {
+        const api_domain = process.env.BACKEND_API_DOMAIN
+            ? process.env.BACKEND_API_DOMAIN
+            : "localhost";
+        const api_url = "http://" + api_domain + ":5000";
+        console.log(api_url);
+        const axiosWithCookies = axios.create({
+            withCredentials: true,
+        });
+
+        axiosWithCookies.post(api_url + "/LLM/getRecipes", {
+            "preference": preference.toString(),
+            "customization": customization
+        })
+            .then(function (response) {
+                // handle success
+                console.log(response.data);
+                parseRecipes(response.data);
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            });
+    }
+
+    useEffect(() => {
+        const api_domain = process.env.BACKEND_API_DOMAIN
+            ? process.env.BACKEND_API_DOMAIN
+            : "localhost";
+        const api_url = "http://" + api_domain + ":5000";
+        console.log(api_url);
+        const axiosWithCookies = axios.create({
+            withCredentials: true,
+        });
+
+        axiosWithCookies.get(api_url + "/ingredients")
+            .then(function (response) {
+                // handle success
+                setIngredients(response.data);
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            });
+    }, []);
 
     return (
         <>
@@ -115,29 +104,32 @@ function Recipes() {
                                     <Col className="text-center">Exp</Col>
                                     <Col className="text-center">Use?</Col>
                                 </Row>
-                                <IngredientFormItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} preference={preference} setPreference={setPreference}/>
-                                <IngredientFormItem ingredient={"Onion"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} preference={preference} setPreference={setPreference}/>
-                                <IngredientFormItem ingredient={"Potato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} preference={preference} setPreference={setPreference}/>
-                                <IngredientFormItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} />
-                                <IngredientFormItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} />
-                                <IngredientFormItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} />
-                                <IngredientFormItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} />
-                                <IngredientFormItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} />
-                                <IngredientFormItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} />
-                                <IngredientFormItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} />
-                                <IngredientFormItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} />
-                                <IngredientFormItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} />
+                                {ingredients.map((ingredient, i) => (
+                                    <IngredientFormItem key={i}
+                                                    ingredient={ingredient.name}
+                                                    quantity={ingredient.amount}
+                                                    unit={ingredient.unit}
+                                                    expDate={ingredient.expiry_date}
+                                                    IID={ingredient._id}
+                                                    preference={preference}
+                                                    setPreference={setPreference}
+                                    />
+                                ))}
                             </Col>
                         </Row>
                         <Row className="mt-3 recipe-width mx-auto">
                             <h2 className="text-black text-center">Customization</h2>
                             <Col className="p-0">
-                                <Form.Control className="customization" as="textarea" placeholder="Enter your customization..." rows={4}/>
+                                <Form.Control className="customization"
+                                              as="textarea"
+                                              placeholder="Enter your customization..."
+                                              rows={4}
+                                              onChange={(e) => setCustomization(e.target.value)}/>
                             </Col>
                         </Row>
 
                         <Row className="mt-4 recipe-width mx-auto">
-                            <Button variant="success" onClick={() => parseRecipes(returnJSONObject)}>
+                            <Button variant="success" onClick={getRecipes}>
                                 Generate Recipes
                             </Button>
                         </Row>
