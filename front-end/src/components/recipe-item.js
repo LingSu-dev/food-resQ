@@ -1,19 +1,20 @@
 import {Accordion} from "react-bootstrap";
 import React from "react";
 
-function RecipeItem({eventKey}) {
+function RecipeItem({eventKey, recipe}) {
     return (
         <>
             <Accordion.Item eventKey={eventKey}>
-                <Accordion.Header>Accordion Item #1</Accordion.Header>
+                <Accordion.Header>{recipe["name"]}</Accordion.Header>
                 <Accordion.Body>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                    pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                    culpa qui officia deserunt mollit anim id est laborum.
+                    <h4>Ingredients</h4>
+                    {recipe["ingredients"]}
+                    <h4>Steps</h4>
+                    <ol>
+                        {recipe["instructions"].map((step, index) => (
+                            <li key={index}>{step}</li>
+                        ))}
+                    </ol>
                 </Accordion.Body>
             </Accordion.Item>
         </>

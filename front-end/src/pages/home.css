@@ -6,10 +6,6 @@
         background-color: white;
 }
 
-/*.ingredients-item:nth-child(even) {*/
-/*        background-color: #f3f3f3;*/
-/*}*/
-
 .ingredients-view {
-        max-height: 72vh;
+        max-height: 55vh;
 }
