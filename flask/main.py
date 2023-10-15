@@ -6,7 +6,8 @@ from bson import ObjectId
 import bcrypt
 import openai
 import langchain
-from langchain.chat_models import ChatOpenAI as OpenAI
+# from langchain.chat_models import ChatOpenAI as OpenAI
+from langchain.llms import OpenAI
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -28,7 +29,8 @@ users_collection = db['users']
 ingredients_collection = db['ingredients']
 
 os.environ["OPENAI_API_KEY"] = config('OPENAPIKEY')
-llm=OpenAI(temperature=0, model_name="gpt-3.5-turbo-16k-0613")
+# llm=OpenAI(temperature=0, model_name="gpt-3.5-turbo-16k-0613")
+llm=OpenAI(temperature=0, model_name="gpt-3.5-turbo")
 
 def is_authenticated():
     return 'username' in session
@@ -167,7 +169,8 @@ def get_LLM_recipes():
     body = request.get_json()
     custom = str(body.get("customization"))
     preference = str(body.get("preference"))
-    recipes_numbers = str(body.get("recipe_numbers"))
+    # recipes_numbers = str(body.get("recipe_numbers"))
+    recipes_numbers = str(3)
     servings = str(3)
     username = session['username']
     
@@ -182,13 +185,17 @@ def get_LLM_recipes():
         })
     user_ingredients = str(ingredients_list)
 
-    prompt = """You are a home cook who needs to use their ingredients in the fridge and today is []. 
-    Make sure you are not using ingredients just to use them, make extra sure that you are trying your best to not use ingredients that you do not have, and make sure to use ingredients that makes sense together. 
-    In your fridge you have """+user_ingredients+""", You are planning to cook for """+servings+""" serving(s) and you are to provide """+recipes_numbers+""" recipe(s) complete with cooking time. As a request from your family, they wanted you to {customization: """+custom+""", preference: """+preference+"""}.
-    Please return the ingredients used as a json object with key as ingredient name and value as the amount used. Please then return the recipe steps as a list of strings (steps 1 by 1). 
-    Finally Package the result as aother new json object with form {ingredients: { dish1: [amount, unit], name2: [amount, unit] ...], dish2:[ ... ], .... }, instruction: [dish1: ["step 1", "step 2", .... , "step n",  "Preparation and cooking time"], dish2: [ ... ], ....]
-    """
+    prompt = """You are a home cook who needs to use their ingredients in the fridge. Make sure you are not using ingredients just to use them, make extra sure that you are trying your best to not use ingredients that you do not have, and make sure to use ingredients that makes sense together. 
+    In your fridge you have """+user_ingredients+""", you are to provide """+recipes_numbers+""" recipe(s) complete with cooking time. As a request from your family, they provided you with some requirements {customization: """+custom+""", preference: """+preference+"""}.
+    Take those requirements into consideration when you're generating the recipes. Additionally, try to keep each step concise and limit the number of steps to 6 or below for each recipe.
+    Instead of using recipe1, recipe2, etc., consider replacing it proper dish names according to the recipe.
     
+    Once you generate the results, map everything onto a single JSON object, defined as follows
+    {ingredients: {recipe1: {ingredient1: [amount, unit], ingredient2: [amount, unit], ...}, recipe2: {ingredient1: [amount, unit], ingredient2: [amount, unit], ...}, recipe3: {ingredient1: [amount, unit], ingredient2: [amount, unit], ...}}, instructions: {recipe1: [step1, step2, ..., stepn, estimated preparation time], recipe2: [step1, step2, ..., stepn, estimated preparation time], recipe3: [step1, step2, ..., stepn, estimated preparation time]}}
+
+    Don't return any text, just the JSON object. In other words, your answer should start with { and end with }
+    """
+
     logging.basicConfig(filename="std.log", 
 					format='%(asctime)s %(message)s', 
 					filemode='w') 
@@ -208,8 +215,9 @@ def get_LLM_recipes():
         ),
     ]
     print(prompt)
-    recipe=llm(messages)
+    # recipe=llm(messages)
     # recipe = prompt
+    recipe = llm(prompt)
     logger.debug(recipe) 
     print(recipe)
 

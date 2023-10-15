@@ -23,11 +23,10 @@ function Recipes() {
     const parseRecipes = (recipes) => {
         let recipesArr = [];
 
-        for (const [key, value] of Object.entries(recipes["ingredients"])) {
-            const dishName = key;
+        for (const [dishName, ingredientObj] of Object.entries(recipes["ingredients"])) {
             let ingredients = "";
 
-            for (const [ingredient, qtyUnit] of Object.entries(value)) {
+            for (const [ingredient, qtyUnit] of Object.entries(ingredientObj)) {
                 let ingredientStr = ingredient + ": " + qtyUnit[0] + " " + qtyUnit[1];
                 ingredients += ingredientStr + ", ";
             }
