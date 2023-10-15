@@ -19,7 +19,7 @@ import logging
 from flask_cors import CORS 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 app.secret_key = config('SECRET_KEY')
 client = MongoClient(config('MONGO_URI'), server_api=ServerApi('1'))
@@ -35,7 +35,6 @@ def is_authenticated():
 
 @app.before_request
 def authentication_middleware():
-    print(request.endpoint)
     if not is_authenticated() and request.endpoint not in ['login', 'signup']:
         # Redirect to the login page if not authenticated
         print("reached middleware")
@@ -55,7 +54,8 @@ def login():
 
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
         session['username'] = username
-        return username
+        print(session['username'])
+        return session['username']
     else:
         return jsonify({'error': 'Incorrect Credentials'}), 401
 
@@ -71,7 +71,6 @@ def signup():
     if not existing_user:
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         users_collection.insert_one({'username': username, 'password': hashed_password})
-        session['username'] = username
         return username
     else:
         return jsonify({'error': 'User already exists'}), 400
@@ -79,7 +78,7 @@ def signup():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
-    return redirect(url_for('home'))
+    return jsonify({}), 200
 
 @app.route('/ingredients', methods=['POST'])
 def create_ingredient():
@@ -208,6 +207,7 @@ def get_LLM_recipes():
             content="prompt"
         ),
     ]
+    print(prompt)
     recipe=llm(messages)
     # recipe = prompt
     logger.debug(recipe) 
