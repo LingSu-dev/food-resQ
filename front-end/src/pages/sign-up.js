@@ -39,14 +39,14 @@ function Signup() {
         .then(function (response) {
           // handle success
           console.log(response);
-          //   window.location.href = "/signin";
+          window.location.href = "/signin";
         })
         .catch(function (error) {
           // handle error
           console.log(error);
           if (error.response) {
             if (error.response.status === 400) {
-              setErrors(error.response.data);
+              setErrors(error.response.data.error);
             } else {
               setErrors("Error from backend: " + error.response.status);
             }
