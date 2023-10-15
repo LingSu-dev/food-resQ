@@ -1,0 +1,64 @@
+@import "~bootstrap/scss/bootstrap";
+
+.App {
+  text-align: center;
+}
+
+.vh-calc {
+  height: calc(100vh - 56px);
+}
+
+.home {
+  background-color: #E3FFDF;
+}
+
+.customization {
+  resize: none;
+}
+
+.recipe-width {
+    width: 85%;
+}
+
+.recipe-generate-area {
+  background-color: #C3F9C5;
+  margin: 3rem 3rem 11rem;
+  height: 80vh;
+}
+
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+
+$all-colors: map-merge-multiple(
+  $blues,
+  $indigos,
+  $purples,
+  $pinks,
+  $reds,
+  $oranges,
+  $yellows,
+  $greens,
+  $teals,
+  $cyans
+);
+
+$utilities: map-merge(
+  $utilities,
+  (
+    "color":
+      map-merge(
+        map-get($utilities, "color"),
+        (
+          values:
+            map-merge(
+              map-get(map-get($utilities, "color"), "values"),
+              ($all-colors)
+            ),
+        )
+      ),
+  )
+);
+
+@import "bootstrap/scss/utilities/api";

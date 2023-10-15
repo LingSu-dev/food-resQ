@@ -1,0 +1,11 @@
+.ingredients-header {
+        background-color: #01987a;
+}
+
+.ingredients-item {
+        background-color: white;
+}
+
+.ingredients-view {
+        max-height: 55vh;
+}
