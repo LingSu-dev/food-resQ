@@ -170,8 +170,8 @@ def get_LLM_recipes():
     body = request.get_json()
     custom = str(body.get("customization"))
     preference = str(body.get("preference"))
-    recipes_numbers = str(body.get("recipe_numbers"))
-    servings = str(3)
+    recipes_numbers = str(3)
+    servings = str(body.get("servings"))
     username = session['username']
     
     ingredients = list(ingredients_collection.find({'username': username}))
@@ -189,7 +189,7 @@ def get_LLM_recipes():
     Make sure you are not using ingredients just to use them, make extra sure that you are trying your best to not use ingredients that you do not have, and make sure to use ingredients that makes sense together. 
     In your fridge you have """+user_ingredients+""", You are planning to cook for """+servings+""" serving(s) and you are to provide """+recipes_numbers+""" recipe(s) complete with cooking time. As a request from your family, they wanted you to {customization: """+custom+""", preference: """+preference+"""}.
     Please return the ingredients used as a json object with key as ingredient name and value as the amount used. Please then return the recipe steps as a list of strings (steps 1 by 1). 
-    Finally Package the result as aother new json object with form {ingredients: { dish1: [amount, unit], name2: [amount, unit] ...], dish2:[ ... ], .... }, instruction: [dish1: ["step 1", "step 2", .... , "step n",  "Preparation and cooking time"], dish2: [ ... ], ....]
+    Finally Package the result as aother new json object with form {ingredients: { dish1: [ingredient1:[amount, unit], ingredient2: [amount, unit] ...], dish2:[ingredient1:[amount, unit], ingredient2: [amount, unit] ...], dish3: .... }, instruction: [dish1: ["step 1", "step 2", .... , "step n",  "Preparation and cooking time"], dish2: [ ... ], ....]
     """
     
     logging.basicConfig(filename="std.log", 
