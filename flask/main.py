@@ -4,18 +4,20 @@ from flask import Flask, request, redirect, url_for, session, jsonify
 from decouple import config
 from bson import ObjectId
 import bcrypt
-import openai
+# import openai
 import langchain
-from langchain.chat_models import ChatOpenAI as OpenAI
+# from langchain.chat_models import ChatOpenAI as OpenAI
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
     AIMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
+from langchain.llms import OpenAI
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 import os
 import logging
+import requests
 
 app = Flask(__name__)
 app.secret_key = config('SECRET_KEY')
@@ -25,7 +27,8 @@ users_collection = db['users']
 ingredients_collection = db['ingredients']
 
 os.environ["OPENAI_API_KEY"] = config('OPENAPIKEY')
-llm=OpenAI(temperature=0, model_name="gpt-3.5-turbo-16k-0613")
+# openai.api_key = os.environ["OPENAI_API_KEY"]
+llm = OpenAI(temperature=0, model_name="gpt-3.5-turbo")
 
 def is_authenticated():
     return 'username' in session
@@ -202,20 +205,34 @@ def get_LLM_recipes():
     #some messages to test
     logger.debug(prompt)
     logger.debug("\n")
-    messages = [
-        HumanMessage(
-            content="prompt"
-        ),
-    ]
-    recipe=llm(messages)
+    # messages = [
+    #     HumanMessage(
+    #         content="prompt"
+    #     ),
+    # ]
+    recipe=llm(prompt)
     # recipe = prompt
-    logger.debug(recipe) 
+    # recipe = messages
+    # recipe = openai.ChatCompletion.create(engine="gpt-3.5-turbo", temperature=0,
+    #                                       messages=[{
+    #                                           "role": "user",
+    #                                           "content": prompt
+    #                                       }])
+    # auth = "Bearer " + os.environ["OPENAI_API_KEY"]
+    # response = requests.post("https://api.openai.com/v1/chat/completions",
+    #                          headers={"Content-Type": "application/json",
+    #                                   "Authorization": auth},
+    #                          data={"model": "gpt-3.5-turbo",
+    #                                "messages": [{"role": "user", "content": "Say this is a test!"}],
+    #                                "temperature": 0.7})
+    # response = requests.get("https://www.google.com/")
+    # print(response.text)
+    # recipe = response.choices[0].message.content
+    # logger.debug(recipe)
+    # print(recipe)
+    #
+    # return recipe
     print(recipe)
-
     return recipe
-
-
-
-
 
 app.run(host='0.0.0.0', port=5000)
