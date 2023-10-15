@@ -35,8 +35,10 @@ def is_authenticated():
 
 @app.before_request
 def authentication_middleware():
+    print(request.endpoint)
     if not is_authenticated() and request.endpoint not in ['login', 'signup']:
         # Redirect to the login page if not authenticated
+        print("reached middleware")
         return 'You are not logged in'
 
 @app.route('/')
@@ -53,7 +55,7 @@ def login():
 
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
         session['username'] = username
-        return redirect(url_for('profile'))
+        return username
     else:
         return jsonify({'error': 'Incorrect Credentials'}), 401
 
@@ -70,7 +72,7 @@ def signup():
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         users_collection.insert_one({'username': username, 'password': hashed_password})
         session['username'] = username
-        return redirect(url_for('profile'))
+        return username
     else:
         return jsonify({'error': 'User already exists'}), 400
 
@@ -78,10 +80,6 @@ def signup():
 def logout():
     session.pop('username', None)
     return redirect(url_for('home'))
-
-@app.route('/profile')
-def profile():
-    return f'Welcome, {session["username"]}'
 
 @app.route('/ingredients', methods=['POST'])
 def create_ingredient():
