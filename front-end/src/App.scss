@@ -12,6 +12,20 @@
   background-color: #E3FFDF;
 }
 
+.customization {
+  resize: none;
+}
+
+.recipe-width {
+    width: 85%;
+}
+
+.recipe-generate-area {
+  background-color: #C3F9C5;
+  margin: 3rem 3rem 11rem;
+  height: 80vh;
+}
+
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/mixins";

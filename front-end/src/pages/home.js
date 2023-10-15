@@ -19,13 +19,13 @@ function Home() {
     return (
         <>
             <Navbar />
-            <Container fluid className="home vh-calc pt-4 overflow-hidden">
+            <Container fluid className="home vh-calc pt-4 overflow-auto">
                 <Row>
                     <h1 className="text-black text-center">[]'s Fridge</h1>
                 </Row>
 
                 <Row>
-                    <Col className="ingredients-view overflow-y-scroll h-75">
+                    <Col className="ingredients-view overflow-y-scroll">
                         <Row className="ingredients-header mt-3 w-75 fs-4 p-3 rounded-top-3 mx-auto text-white fw-bold">
                             <Col className="text-center">Ingredient</Col>
                             <Col className="text-center">Quantity</Col>
@@ -47,7 +47,7 @@ function Home() {
                         <IngredientItem ingredient={"Tomato"} quantity={5} unit={"Kg"} expDate={"07/05/2023"} />
                     </Col>
                 </Row>
-                <Row className="h-100 justify-content-center w-50 mx-auto mt-4">
+                <Row className="justify-content-center w-50 mx-auto mt-4">
                     <Col auto className="text-center">
                         <Button size="lg" variant="success" onClick={handleShow}><strong>Add Ingredients</strong></Button>
                     </Col>
