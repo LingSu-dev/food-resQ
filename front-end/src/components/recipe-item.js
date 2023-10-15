@@ -11,10 +11,11 @@ function RecipeItem({eventKey, recipe}) {
                     {recipe["ingredients"]}
                     <h4>Steps</h4>
                     <ol>
-                        {recipe["instructions"].map((step, index) => (
+                        {recipe["instructions"].slice(0, recipe["instructions"].length - 1).map((step, index) => (
                             <li key={index}>{step}</li>
                         ))}
                     </ol>
+                    <strong>{recipe["instructions"][recipe["instructions"].length - 1]}</strong>
                 </Accordion.Body>
             </Accordion.Item>
         </>
