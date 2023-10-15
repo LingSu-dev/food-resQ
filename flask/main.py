@@ -16,8 +16,11 @@ from langchain.prompts.chat import (
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 import os
 import logging
+from flask_cors import CORS 
 
 app = Flask(__name__)
+CORS(app)
+
 app.secret_key = config('SECRET_KEY')
 client = MongoClient(config('MONGO_URI'), server_api=ServerApi('1'))
 db = client[config('MONGO_DB')]
@@ -60,7 +63,7 @@ def signup():
     body = request.get_json()
     username = body.get("username")
     password = body.get("password")
-
+    
     existing_user = users_collection.find_one({'username': username})
 
     if not existing_user:
